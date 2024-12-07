@@ -6,16 +6,16 @@ import '../main_navigation_screen.dart';
 
 class WritePage extends StatefulWidget {
   final String title;
+  final String author;
   final String picture;
 
-  const WritePage({Key? key, required this.title, required this.picture}) : super(key: key);
+  const WritePage({Key? key, required this.title,required this.author, required this.picture}) : super(key: key);
 
   @override
   _WritePageState createState() => _WritePageState();
 }
 
 class _WritePageState extends State<WritePage> {
-  final _authorController = TextEditingController();
   final _contentController = TextEditingController();
 
   Future<void> _submitBook() async {
@@ -32,7 +32,7 @@ class _WritePageState extends State<WritePage> {
     final bookData = {
       'title': widget.title,
       'picture': widget.picture,
-      'author': _authorController.text.trim(),
+      'author': widget.author,
       'content': _contentController.text.trim(),
     };
 
@@ -48,7 +48,7 @@ class _WritePageState extends State<WritePage> {
     if (response.statusCode == 200) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => AppNavigator(selectedIndex: 1), // 키 없이 전달
+          builder: (context) => AppNavigator(selectedIndex: 1),
         ),
       );
     } else {
@@ -61,17 +61,10 @@ class _WritePageState extends State<WritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Write Review'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              decoration: const InputDecoration(labelText: 'Author'),
-              controller: _authorController,
-            ),
             TextField(
               decoration: const InputDecoration(labelText: 'Content'),
               controller: _contentController,

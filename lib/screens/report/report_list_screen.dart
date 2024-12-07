@@ -7,10 +7,10 @@ import 'write_report.dart';
 import 'edit_report.dart';
 
 class Report {
-  final int id;  // String에서 int로 변경
+  final int id;
   final String title;
   final String content;
-  final String user;  // user 필드 추가
+  final String user;
 
   Report({
     required this.id,
@@ -21,7 +21,7 @@ class Report {
 
   factory Report.fromJson(Map<String, dynamic> json) {
     return Report(
-      id: json['id'] as int,  // int로 파싱
+      id: json['id'] as int,
       title: json['title'] ?? '',
       content: json['content'] ?? '',
       user: json['user'] ?? '',
@@ -273,19 +273,18 @@ class _ReportListPageState extends State<ReportListPage> {
         alignment: Alignment.center,
         child: InkWell(
           onTap: () {
-            // AppNavigatorState를 찾아 navigateToHome 호출
             final appNavigatorState = context.findAncestorStateOfType<AppNavigatorState>();
             appNavigatorState?.navigateToHome();
           },
           child: Row(
             children: [
               Image.asset(
-                'assets/images/sub.png', // 로고 이미지 경로
+                'assets/images/sub.png',
                 width: 100,
               ),
-              const Expanded( // 텍스트가 남은 공간을 차지
+              const Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 24), // 텍스트만 아래로 8만큼 내림
+                  padding: const EdgeInsets.only(top: 24),
                   child: const Text(
                     '다양한 독서활동을 모아보자',
                     style: TextStyle(
@@ -333,115 +332,4 @@ class _ReportListPageState extends State<ReportListPage> {
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: const Color(0xFFF5F5F5),
-  //     body: SafeArea(
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(16.0),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Container(
-  //               width: double.infinity,
-  //               padding: const EdgeInsets.all(16.0),
-  //               decoration: BoxDecoration(
-  //                 gradient: const LinearGradient(
-  //                   begin: Alignment.topLeft,
-  //                   end: Alignment.bottomRight,
-  //                   colors: [Color(0xFF7B8FF7), Color(0xFF5C6BC0)],
-  //                 ),
-  //                 borderRadius: BorderRadius.circular(12),
-  //               ),
-  //               child: Row(
-  //                 children: [
-  //                   Image.asset(
-  //                     'assets/images/main.png', // 로고 이미지 경로
-  //                     width: 150,
-  //                   ),
-  //                   const SizedBox(width: 8),
-  //                   const Text(
-  //                     '다양한 독서활동을 모아보자',
-  //                     style: TextStyle(
-  //                       color: Colors.white,
-  //                       fontSize: 20,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             const SizedBox(height: 16),
-  //             Expanded(
-  //               child: isLoading
-  //                   ? const Center(child: CircularProgressIndicator())
-  //                   : RefreshIndicator(
-  //                 onRefresh: fetchReports,
-  //                 child: ListView.builder(
-  //                   itemCount: reports.length,
-  //                   itemBuilder: (context, index) {
-  //                     final report = reports[index];
-  //                     return Padding(
-  //                       padding: const EdgeInsets.only(bottom: 12.0),
-  //                       child: Container(
-  //                         decoration: BoxDecoration(
-  //                           color: Colors.white,
-  //                           borderRadius: BorderRadius.circular(12),
-  //                           boxShadow: [
-  //                             BoxShadow(
-  //                               color: Colors.grey.withOpacity(0.1),
-  //                               spreadRadius: 1,
-  //                               blurRadius: 6,
-  //                               offset: const Offset(0, 3),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                         child: Material(
-  //                           color: Colors.transparent,
-  //                           child: InkWell(
-  //                             borderRadius: BorderRadius.circular(12),
-  //                             onTap: () {
-  //                               // 클릭 시 상세 페이지로 이동
-  //                             },
-  //                             child: Padding(
-  //                               padding: const EdgeInsets.all(16.0),
-  //                               child: Column(
-  //                                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                                 children: [
-  //                                   Text(
-  //                                     report.title,
-  //                                     style: const TextStyle(
-  //                                       fontSize: 16,
-  //                                       fontWeight: FontWeight.bold,
-  //                                       color: Color(0xFF333333),
-  //                                     ),
-  //                                   ),
-  //                                   const SizedBox(height: 8),
-  //                                   Text(
-  //                                     report.content,
-  //                                     style: const TextStyle(
-  //                                       fontSize: 14,
-  //                                       color: Color(0xFF666666),
-  //                                     ),
-  //                                     maxLines: 2,
-  //                                     overflow: TextOverflow.ellipsis,
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     );
-  //                   },
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }

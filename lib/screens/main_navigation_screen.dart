@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:untitled2/screens/book/write_book.dart';
+import 'package:untitled2/screens/chat/chat_screen.dart';
 import 'book/book_list_screen.dart';
 import 'writing/write_manuscript.dart';
 import 'mypage/book_reader_home_page.dart';
@@ -17,8 +17,6 @@ class AppNavigator extends StatefulWidget {
 
 class AppNavigatorState extends State<AppNavigator> {
   late int _selectedIndex;
-  //int _selectedIndex = 2; // 기본적으로 'BookReaderHomePage'가 선택된 상태로 시작
-  //bool _shouldRefreshBookList = false;
 
   late List<Widget> _screens;
 
@@ -37,15 +35,15 @@ class AppNavigatorState extends State<AppNavigator> {
         key: UniqueKey(),
         onRefresh: () {},
       ),
+      ChatScreen(),
       const Center(child: Text('나의 독후감')),
       const Center(child: Text('마이 페이지')),
     ];
   }
 
-  // BottomNavigationBar에서 항목을 탭했을 때 호출되는 함수
   void onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // 탭한 인덱스 화면을 선택
+      _selectedIndex = index;
     });
   }
 
@@ -53,13 +51,12 @@ class AppNavigatorState extends State<AppNavigator> {
     setState(() {
       _selectedIndex = index;
       _screens[1] = BookListScreen(
-        key: UniqueKey(), // 강제로 새로고침
+        key: UniqueKey(),
         onRefresh: () {},
       );
     });
   }
 
-  // 앱 내에서 다른 페이지로 이동할 때 BottomNavigationBar가 계속 보이도록 하는 함수
   void navigateToScreen(int index) {
     setState(() {
       _selectedIndex = index;
@@ -68,7 +65,7 @@ class AppNavigatorState extends State<AppNavigator> {
 
   void navigateToHome() {
     setState(() {
-      _selectedIndex = 2; // 홈 화면(BookReaderHomePage) 인덱스로 전환
+      _selectedIndex = 2;
     });
   }
 
@@ -76,12 +73,12 @@ class AppNavigatorState extends State<AppNavigator> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
-        index: _selectedIndex, // 현재 선택된 화면 인덱스
-        children: _screens,    // 화면 리스트
+        index: _selectedIndex,
+        children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex, // 현재 선택된 인덱스
+        currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
@@ -90,36 +87,36 @@ class AppNavigatorState extends State<AppNavigator> {
         items: [
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/icons/ph_pen-nib.png',  // 아이콘 이미지
-              width: 24, // 아이콘 크기
+              'assets/icons/ph_pen-nib.png',
+              width: 24,
             ),
             label: '오늘의 필사',
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/icons/cil_book.png',  // 아이콘 이미지
-              width: 24, // 아이콘 크기
+              'assets/icons/cil_book.png',
+              width: 24,
             ),
             label: '책소통 광장',
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/icons/cil_book.png',  // 아이콘 이미지
-              width: 24, // 아이콘 크기
+              'assets/icons/home.png',
+              width: 24,
             ),
-            label: '홈 화면',
+            label: '마이 페이지',
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/icons/cil_description.png',  // 아이콘 이미지
-              width: 24, // 아이콘 크기
+              'assets/icons/cil_description.png',
+              width: 24,
             ),
             label: '나의 독후감',
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
-              'assets/icons/carbon_chat.png',  // 아이콘 이미지
-              width: 24, // 아이콘 크기
+              'assets/icons/carbon_chat.png',
+              width: 24,
             ),
             label: '작가님 채팅',
           ),

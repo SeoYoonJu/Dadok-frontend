@@ -65,7 +65,7 @@ class _EditBookScreenState extends State<EditBookScreen> {
       );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => AppNavigator(selectedIndex: 1), // 키 없이 전달
+          builder: (context) => AppNavigator(selectedIndex: 1),
         ),
       );
     } else {
@@ -93,9 +93,9 @@ class _EditBookScreenState extends State<EditBookScreen> {
       );
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => AppNavigator(selectedIndex: 1), // 키 없이 전달
+          builder: (context) => AppNavigator(selectedIndex: 1),
         ),
-      ); // 삭제 후 이전 화면으로 돌아가기
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -108,57 +108,126 @@ class _EditBookScreenState extends State<EditBookScreen> {
     final topSectionHeight = MediaQuery
         .of(context)
         .size
-        .height * 0.4;
-
+        .height * 0.5;
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
+          SizedBox(
             height: topSectionHeight,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF44B1F0),
-                  Color(0xFF874FFF),
-                ],
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-              ),
-            ),
             child: Stack(
               children: [
-                Positioned(
-                  top: 30,
-                  left: 0,
-                  right: 0,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      'assets/images/main.png',
-                      width: 150,
+                Container(
+                  height: topSectionHeight * 0.52,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF44B1F0),
+                        Color(0xFF874FFF),
+                      ],
                     ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 30),
+                      Image.asset(
+                        'assets/images/main.png',
+                        width: 150,
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            ElevatedButton(
+                              onPressed: _updateBook,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: const Color(0xFF44B1F0),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              ),
+                              child: const Text('내글 수정'),
+                            ),
+                            const SizedBox(width: 12),
+                            ElevatedButton(
+                              onPressed: _deleteBook,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: Colors.red,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              ),
+                              child: const Text('내글 삭제'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Positioned(
-                  bottom: 20,
+                  top: topSectionHeight * 0.35,
                   left: 20,
                   right: 20,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ElevatedButton(
-                        onPressed: _updateBook,
-                        child: const Text('Update'),
+                      Container(
+                        width: 140,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            widget.picture,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                      ElevatedButton(
-                        onPressed: _deleteBook,
-                        child: const Text('Delete'),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Container(
+                          height: topSectionHeight * 0.55,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.title,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                widget.author,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -167,27 +236,21 @@ class _EditBookScreenState extends State<EditBookScreen> {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(controller: _titleController,
-                      decoration: const InputDecoration(labelText: 'Title')),
-                  const SizedBox(height: 8.0),
-                  TextField(controller: _authorController,
-                      decoration: const InputDecoration(labelText: 'Author')),
-                  const SizedBox(height: 16.0),
-                  Expanded(
-                    child: TextField(
-                      controller: _contentController,
-                      decoration: const InputDecoration(labelText: 'Content'),
-                      maxLines: null,
-                      expands: true,
-                      textAlignVertical: TextAlignVertical.top,
-                    ),
-                  ),
-                ],
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: TextField(
+                controller: _contentController,
+                decoration: const InputDecoration(
+                  hintText: '글 작성',
+                  border: InputBorder.none,
+                ),
+                maxLines: null,
+                expands: true,
               ),
             ),
           ),
@@ -195,54 +258,5 @@ class _EditBookScreenState extends State<EditBookScreen> {
       ),
     );
   }
-
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Edit Book'),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Row(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Expanded(
-//                   child: Image.network(
-//                     widget.picture,
-//                     width: 100,
-//                     height: 150,
-//                     fit: BoxFit.cover,
-//                   ),
-//                 ),
-//                 const SizedBox(width: 16.0),
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       TextField(controller: _titleController, decoration: const InputDecoration(labelText: 'Title')),
-//                       TextField(controller: _authorController, decoration: const InputDecoration(labelText: 'Author')),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 16.0),
-//             TextField(
-//               controller: _contentController,
-//               decoration: const InputDecoration(labelText: 'Content'),
-//               maxLines: 5,
-//             ),
-//             const SizedBox(height: 20),
-//             ElevatedButton(onPressed: _updateBook, child: const Text('Update')),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 }
+

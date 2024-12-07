@@ -19,7 +19,7 @@ class _JoinScreenState extends State<JoinScreen> {
   Future<void> _join() async {
     final response = await http.post(
       Uri.parse('http://localhost:8080/join'),
-      headers: {'Content-Type': 'application/json'}, // 토큰 없음
+      headers: {'Content-Type': 'application/json'},
       body: json.encode({
         'userId': _userIdController.text,
         'userPassword': _passwordController.text,
@@ -44,19 +44,133 @@ class _JoinScreenState extends State<JoinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('회원가입')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(controller: _userIdController, decoration: const InputDecoration(labelText: '아이디')),
-            TextField(controller: _passwordController, decoration: const InputDecoration(labelText: '비밀번호')),
-            TextField(controller: _usernameController, decoration: const InputDecoration(labelText: '사용자 이름')),
-            TextField(controller: _goalController, decoration: const InputDecoration(labelText: '목표')),
-            TextField(controller: _favoriteController, decoration: const InputDecoration(labelText: '좋아하는 책')),
-            const SizedBox(height: 20),
-            ElevatedButton(onPressed: _join, child: const Text('회원가입')),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color(0xFF44B1F0),
+              Color(0xFF874FFF),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Logo and Title Section
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/images/sub.png',
+                      width: 100,
+                    ),
+                    const SizedBox(width: 8),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 20,left: 10),
+                      child: Text(
+                          '회원가입',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              // Form Section
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+                        _buildTextField(_userIdController, '아이디를 입력해주세요'),
+                        const SizedBox(height: 16),
+                        _buildTextField(_passwordController, '비밀번호를 입력해주세요'),
+                        const SizedBox(height: 16),
+                        _buildTextField(_usernameController, '사용자 이름을 입력해주세요'),
+                        const SizedBox(height: 16),
+                        _buildTextField(_goalController, '목표 독서시간을 입력해주세요'),
+                        const SizedBox(height: 16),
+                        _buildTextField(
+                            _favoriteController, '가장 좋아하는 도서를 입력해주세요'),
+                        const SizedBox(height: 40),
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [
+                                Color(0xFF44B1F0),
+                                Color(0xFF874FFF),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: _join,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              foregroundColor: Colors.white,
+                              shadowColor: Colors.transparent,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              '가입하기',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hintText) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(
+          color: Colors.grey[400],
+          fontSize: 14,
+        ),
+        filled: true,
+        fillColor: Colors.grey[100],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
         ),
       ),
     );

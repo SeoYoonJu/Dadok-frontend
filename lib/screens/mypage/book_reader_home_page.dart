@@ -54,13 +54,11 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
     }
   }
 
-  // Fetch Profile Data from API using token
   Future<void> _fetchProfileData() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('authToken'); // Retrieve saved token
+    final String? token = prefs.getString('authToken');
 
     if (token == null) {
-      // If there's no token, display a message or handle it
       print('No token found, please log in');
       return;
     }
@@ -78,10 +76,9 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
           username = data['data']['username'];
           goal = data['data']['goal'];
           favorite = data['data']['favorite'];
-          isLoading = false; // Set loading to false after fetching data
+          isLoading = false;
         });
       } else {
-        // Handle failure case
         setState(() {
           isLoading = false;
         });
@@ -96,7 +93,7 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
   @override
   void initState() {
     super.initState();
-    _fetchProfileData(); // Fetch profile data when the page loads
+    _fetchProfileData();
     _fetchReports();
   }
 
@@ -125,7 +122,7 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
             : ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: reports.length > 3 ? 3 : reports.length, // 최대 3개만 표시
+          itemCount: reports.length > 3 ? 3 : reports.length,
           itemBuilder: (context, index) {
             final report = reports[index];
             return Card(
@@ -292,7 +289,7 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
                         margin: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           image: const DecorationImage(
-                            image: AssetImage('assets/images/book.png'), // 이미지 경로 수정 필요
+                            image: AssetImage('assets/images/book.png'),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(10),

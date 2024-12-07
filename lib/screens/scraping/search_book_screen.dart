@@ -16,10 +16,9 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> _searchBooks() async {
     final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('authToken'); // Retrieve saved token
+    final String? token = prefs.getString('authToken');
 
     if (token == null) {
-      // If there's no token, display a message or handle it
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please log in to search.')),
       );
@@ -28,7 +27,6 @@ class _SearchPageState extends State<SearchPage> {
 
     final query = _searchController.text.trim();
     if (query.isEmpty) {
-      // Show a message if the query is empty
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a search query.')),
       );
@@ -39,7 +37,6 @@ class _SearchPageState extends State<SearchPage> {
       Uri.parse('http://localhost:8080/scrape-products/$query'),
       headers: {'Authorization': 'Bearer $token'},
     );
-
 
     if (response.statusCode == 200) {
       setState(() {
@@ -53,25 +50,18 @@ class _SearchPageState extends State<SearchPage> {
     }
   }
 
-
-
   void _goToWritePage(Map<String, dynamic> book) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => WritePage(
-    //       title: book['title'],
-    //       picture: book['img_url'],
-    //     ),
-    //   ),
-    // );
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => WritePage( title: book['title'],
-             picture: book['img_url'],)),
-          (route) => false, // Removes all previous routes
+      MaterialPageRoute(
+        builder: (context) => WritePage(
+          title: book['title'],
+          picture: book['img_url'],
+          author: book['author'],
+        ),
+      ),
+          (route) => false,
     );
-       }
-
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +96,7 @@ class _SearchPageState extends State<SearchPage> {
         itemBuilder: (context, index) {
           final book = _searchResults[index];
           return GestureDetector(
-            onTap: () => _goToWritePage(book), // 클릭 시 WritePage로 이동
+            onTap: () => _goToWritePage(book),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -129,6 +119,16 @@ class _SearchPageState extends State<SearchPage> {
                       fontWeight: FontWeight.bold,
                     ),
                     maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    book['author'] ?? 'Unknown Author',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

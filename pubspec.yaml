@@ -80,6 +80,7 @@ flutter:
     - assets/images/book.png
     - assets/icons/chat.svg
     - assets/icons/
+    - assets/icons/home.png
     - assets/icons/cil_description.png
     - assets/icons/carbon_chat.png
     - assets/icons/cil_book.png

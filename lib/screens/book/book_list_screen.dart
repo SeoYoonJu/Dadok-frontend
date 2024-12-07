@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'edit_book.dart';
 import '../main_navigation_screen.dart';
+import 'show_book.dart';
 
 class BookListScreen extends StatefulWidget {
   final VoidCallback? onRefresh;
@@ -48,7 +49,6 @@ class _BookListScreenState extends State<BookListScreen> {
             _isLoading = false;
           });
 
-          // 리프레시 콜백 호출
           widget.onRefresh?.call();
         }
       } else {
@@ -68,6 +68,65 @@ class _BookListScreenState extends State<BookListScreen> {
       }
     }
   }
+
+  Future<void> _checkBookOwnership(BuildContext context, BookData book) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('authToken');
+
+      print('Checking ownership for book ID: ${book.id}');
+
+      final response = await http.get(
+        Uri.parse('http://localhost:8080/book/who/${book.id}'),
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final bool isOwner = json.decode(response.body);
+        print('Is owner: $isOwner');
+
+        if (!mounted) return;
+
+        if (isOwner) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditBookScreen(
+                id: book.id,
+                title: book.title,
+                picture: book.picture,
+                author: book.author,
+                content: book.content,
+              ),
+            ),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ShowBookScreen(
+                id: book.id,
+              ),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to check book ownership')),
+        );
+      }
+    } catch (e, stackTrace) {
+      print('Error detail: $e');
+      print('Stack trace: $stackTrace');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -130,8 +189,8 @@ class _BookListScreenState extends State<BookListScreen> {
         alignment: Alignment.center,
         child: InkWell(
           onTap: () {
-            // AppNavigatorState를 찾아 navigateToHome 호출
-            final appNavigatorState = context.findAncestorStateOfType<AppNavigatorState>();
+            final appNavigatorState = context.findAncestorStateOfType<
+                AppNavigatorState>();
             appNavigatorState?.navigateToHome();
           },
           child: Image.asset(
@@ -189,20 +248,7 @@ class _BookListScreenState extends State<BookListScreen> {
         itemBuilder: (context, index) {
           final book = _books[index];
           return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditBookScreen(
-                    id: book.id,
-                    title: book.title,
-                    picture: book.picture,
-                    author: book.author,
-                    content: book.content,
-                  ),
-                ),
-              );
-            },
+            onTap: () => _checkBookOwnership(context, book),
             child: Container(
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
@@ -251,7 +297,6 @@ class _BookListScreenState extends State<BookListScreen> {
   }
 }
 
-// Other necessary classes would be defined here
 class BookData {
   final String id;
   final String title;
