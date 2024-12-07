@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatScreen extends StatefulWidget {
   @override
@@ -25,10 +26,14 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
     _scrollToBottom();
 
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('authToken');
+
+
     try {
       final response = await http.post(
         Uri.parse('http://localhost:8080/chat'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token'},
         body: json.encode({'prompt': text}),
       );
 

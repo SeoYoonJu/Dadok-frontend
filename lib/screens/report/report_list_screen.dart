@@ -146,7 +146,6 @@ class _ReportListPageState extends State<ReportListPage> {
         ),
       );
     }
-
     return RefreshIndicator(
       onRefresh: fetchReports,
       child: ListView(
