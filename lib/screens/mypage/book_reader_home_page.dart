@@ -13,12 +13,13 @@ class BookReaderHomePage extends StatefulWidget {
 }
 
 class _BookReaderHomePageState extends State<BookReaderHomePage> {
-  // Profile Data
+
   String username = '';
   int goal = 0;
   String favorite = '';
   bool isLoading = true;
   List<Report> reports = [];
+  int percent = 0;
 
   Future<void> _fetchReports() async {
     try {
@@ -54,36 +55,55 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
     }
   }
 
-  Future<void> _fetchProfileData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? token = prefs.getString('authToken');
+  Future<void> _fetchData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final String? token = prefs.getString('authToken');
 
-    if (token == null) {
-      print('No token found, please log in');
-      return;
-    }
-
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/mypage/profile'),
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    if (response.statusCode == 200) {
-      final responseBody = utf8.decode(response.bodyBytes);
-      final data = json.decode(responseBody);
-      if (data['isSuccess'] == true) {
-        setState(() {
-          username = data['data']['username'];
-          goal = data['data']['goal'];
-          favorite = data['data']['favorite'];
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
+      if (token == null) {
+        print('No token found');
+        return;
       }
-    } else {
+
+      final Future<http.Response> profileFuture = http.get(
+        Uri.parse('http://localhost:8080/mypage/profile'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      final Future<http.Response> percentFuture = http.get(
+        Uri.parse('http://localhost:8080/mypage/percent'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      final responses = await Future.wait([profileFuture, percentFuture]);
+      final profileResponse = responses[0];
+      final percentResponse = responses[1];
+
+      if (profileResponse.statusCode == 200) {
+        final profileData = json.decode(utf8.decode(profileResponse.bodyBytes));
+        if (profileData['isSuccess'] == true) {
+          setState(() {
+            username = profileData['data']['username'];
+            goal = profileData['data']['goal'];
+            favorite = profileData['data']['favorite'];
+          });
+        }
+      }
+
+      if (percentResponse.statusCode == 200) {
+        final percentData = json.decode(utf8.decode(percentResponse.bodyBytes));
+        if (percentData['isSuccess'] == true) {
+          setState(() {
+            percent = (percentData['data'] as num).toInt();
+          });
+        }
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching data: $e');
       setState(() {
         isLoading = false;
       });
@@ -93,7 +113,7 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
   @override
   void initState() {
     super.initState();
-    _fetchProfileData();
+    _fetchData();
     _fetchReports();
   }
 
@@ -161,6 +181,24 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
             );
           },
         ),
+      ],
+    );
+  }
+
+  Widget _buildProgressSection() {
+    return Column(
+      children: [
+        isLoading
+            ? const SizedBox.shrink()
+            : LinearProgressIndicator(
+          value: percent / 100,
+          backgroundColor: Colors.grey[300],
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+        ),
+        const SizedBox(height: 4),
+        isLoading
+            ? const SizedBox.shrink()
+            : Text('$percent% 달성'),
       ],
     );
   }
@@ -260,19 +298,7 @@ class _BookReaderHomePageState extends State<BookReaderHomePage> {
                                 ? const CircularProgressIndicator()
                                 : Text('가장 좋아하는 도서: $favorite'),
                             const SizedBox(height: 8),
-                            isLoading
-                                ? const SizedBox.shrink()
-                                : LinearProgressIndicator(
-                              value: goal / 100,
-                              backgroundColor: Colors.grey[300],
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Colors.blue),
-                            ),
-                            const SizedBox(height: 4),
-                            isLoading
-                                ? const SizedBox.shrink()
-                                : Text('$goal% 달성'),
-                          ],
+                            _buildProgressSection(),],
                         ),
                       ),
                     ),
